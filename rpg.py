@@ -28,9 +28,9 @@ real_score = score + max_hp + pdmg * 5 + hp_pot * 5 + str_pot * 5 + m / 2
 def query(question, answers):
     global a, b, c, m, n, player_name, quest, quest1, php, pdmg, max_hp, hp_pot, str_pot, score, real_score
     while True:
-        print('^$*@($^@%(#&$@*', question, '*@$&#)%@^$)@*$^')
-        print('Choose one of:', ', '.join(answers))
-        a = input('> ')
+        print('', question, '')
+        print(' Choose one of:', ', '.join(answers))
+        a = input(' > ')
         a = a.lower() # make lowercase
         if a == 'y':
             a = 'yes'
@@ -48,7 +48,7 @@ def heal(amount='0'):
     if php > max_hp:
         amount = php - max_hp
         php = max_hp
-    print('You healed', str(amount), 'health. You are now at', str(php), 'health.')
+    print('You gained', str(amount), 'health. You are now at', str(php), 'health.')
 
 def money(cost='0'):
     global a, b, c, m, n, player_name, quest, quest1, php, pdmg, max_hp, hp_pot, str_pot, score, real_score
@@ -78,7 +78,7 @@ def shop():
         a = query('(1)Weapons, (2)Armor, (3)Potions, (4)Food, or (5)Sell.', ['1', '2', '3', '4', '5', ''])        
         money('0')
         if a == '1':
-            a = query('What level weapon?', ['1', '2', '3', '4'])
+            a = query('What level weapon?', ['1', '2', '3', '4', '5'])
             n = int(a) * 50
             b = 'That will be $' + str(n) + '. Confirm.'
             a = query(b, ['yes', 'no'])
@@ -163,9 +163,9 @@ def shop():
                         if a == 'yes':
                             money(-10)
             elif a == '2':
-                print()
+                print('We don\'t have anything here.')
             elif a == '3':
-                print()
+                print('We don\'t have anything here.')
             elif a == '':
                 money(-1000000000)
             if c != 'sf':
@@ -340,12 +340,12 @@ def inn():
                 say('Room and food please.', player_name)
                 print('You eat and sleep in the inn and wake up feeling refreshed.')
                 money(30)
-                heal(3453)
+                heal(999)
             else:
                 psay('Just a room.')
                 print('You sleep in the inn and wake up feeling refreshed but hungry.')
                 money(20)
-                heal(42674)
+                heal(99)
             say('Come again if you need a place to sleep again.', 'Innkeeper')
         elif a == '2':
             say('Idk what to do.', player_name)
@@ -373,11 +373,13 @@ def jerry():
             say('Here you go.', 'Jerry')
             max_hp = max_hp + 3
             heal(3)
+            print('You go back to town.')
             quest = 'Jerry'
             c = ''
         else:
             psay('How do you know my name?')
             say('I have my ways.', 'Stranger')
+            print('You walk away from the creep.')
             
 def combat(enemy='', hp='5', dmg='1', bvus='-1'):
     #variables
@@ -415,7 +417,7 @@ def combat(enemy='', hp='5', dmg='1', bvus='-1'):
                         hp_pot = hp_pot + 1
                     elif bvus < 61 and bvus >= 50:
                         loot = 'a better weapon'
-                        pdmg = pdmg + 1
+                        b = pdmg + 1
                     elif bvus < 72 and bvus >= 61:
                         loot = 'better armor'
                         max_hp = max_hp + 2
@@ -473,6 +475,17 @@ def combat(enemy='', hp='5', dmg='1', bvus='-1'):
                         print('You didn\'t use anything.')
                         print('But you spent so much time looking you lost your turn.')
         else:
+            php = php - enemy_dmg
+            print('You took', enemy_dmg, 'damage from', enemy + '. You are now at', php, 'health.')
+            if php <= 0:
+                print('You died.')
+                score = score - 100
+                if score < 0:
+                    score = 0
+                real_score = score + max_hp + pdmg * 5 + hp_pot * 5 + str_pot * 5 + m / 2
+                print('Your score is:', str(real_score))
+                c = ''
+                sys.exit()
             print('You ran away from', enemy + '.')
             c = ''
             break
@@ -484,19 +497,18 @@ def combat(enemy='', hp='5', dmg='1', bvus='-1'):
             if score < 0:
                 score = 0
             real_score = score + max_hp + pdmg * 5 + hp_pot * 5 + str_pot * 5 + m / 2
-            print('Your score is:', str(real_score) + '.')
+            print('Your score is:', str(real_score))
             c = ''
             sys.exit()
     pdmg = b
     
 
 #start of program
-print('Do not use punctuation in your answers.')
 print('Ready player n.')
 print()
 time.sleep(1)
 #start of game
-player_name = input('What is your name?:')
+player_name = input(' What is your name?:')
 say('Welcome traveler.', 'Dangalf')
 a = query('Dangalf:"Do you want to go on an adventure?"', ['yes', 'no'])
 if a == 'yes':
